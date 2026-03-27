@@ -13,7 +13,7 @@ const eventSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['Workshop', 'Hackathon', 'Meetup', 'Conference', 'Paper presentation','Seminar','Others']
+    enum: ['Workshop', 'Hackathon', 'Meetup', 'Conference', 'Paper presentation', 'Seminar', 'Others']
   },
   date: {
     type: Date,
@@ -36,20 +36,54 @@ const eventSchema = new mongoose.Schema({
     },
   },
   collegeName: {
-    type: String, // Name of the college/university
+    type: String,
     required: true,
     default: 'Anonymous',
   },
   poster: {
-    type: String, // URL to the poster image
+    type: String,
     default: 'https://images.unsplash.com/photo-1540575861501-7ce0e224271a?auto=format&fit=crop&q=80&w=800',
   },
   link: {
-    type: String, // URL to college website or event page
+    type: String,
     default: '',
   },
+  // --- Startup Features ---
+  whatsappNumber: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  price: {
+    type: Number,
+    default: 0, // 0 means Free
+  },
+  capacity: {
+    type: Number,
+    default: 100, // Max participants
+  },
+  tags: {
+    type: [String],
+    default: [],
+  },
+  organizerName: {
+    type: String,
+    default: '',
+  },
+  registrationLink: {
+    type: String,
+    default: '',
+  },
+  isVerified: {
+    type: Boolean,
+    default: false, // For official events
+  },
+  isFeatured: {
+    type: Boolean,
+    default: false, // For highlighting
+  },
+  // -------------------------
   createdAt: {
-
     type: Date,
     default: Date.now,
   },
@@ -60,3 +94,4 @@ eventSchema.index({ location: '2dsphere' });
 eventSchema.index({ date: 1 }, { expireAfterSeconds: 86400 });
 
 module.exports = mongoose.model('Event', eventSchema);
+

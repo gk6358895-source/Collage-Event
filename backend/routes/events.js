@@ -33,11 +33,11 @@ router.get('/nearby', async (req, res) => {
 // 2. GET /api/events - Get all events
 router.get('/', async (req, res) => {
   try {
-      const events = await Event.find().sort({ date: 1 });
-      res.json(events);
+    const events = await Event.find().sort({ date: 1 });
+    res.json(events);
   } catch (error) {
-      console.error('Error fetching events:', error);
-      res.status(500).json({ error: 'Server error fetching events.' });
+    console.error('Error fetching events:', error);
+    res.status(500).json({ error: 'Server error fetching events.' });
   }
 });
 
@@ -46,8 +46,11 @@ router.post('/', async (req, res) => {
   console.log('POST /api/events received with body:', req.body);
   try {
 
-    const { title, description, category, date, longitude, latitude, address, collegeName, poster, link } = req.body;
-    console.log('Extracted fields:', { title, description, category, date, longitude, latitude, address, collegeName });
+    const {
+      title, description, category, date, longitude, latitude, address,
+      collegeName, poster, link, whatsappNumber, price, capacity, tags,
+      organizerName, registrationLink, isVerified, isFeatured
+    } = req.body;
 
     const missing = [];
     if (!title) missing.push('title');
@@ -59,27 +62,34 @@ router.post('/', async (req, res) => {
     if (!address) missing.push('address');
 
     if (missing.length > 0) {
-       console.log('Validation failed. Missing fields:', missing);
-       return res.status(400).json({ error: `Missing required event fields: ${missing.join(', ')}` });
+      return res.status(400).json({ error: `Missing required event fields: ${missing.join(', ')}` });
     }
 
-
     const newEvent = new Event({
-        title,
-        description,
-        category,
-        date,
-        location: {
-            type: 'Point',
-            coordinates: [parseFloat(longitude), parseFloat(latitude)],
-            address: address,
-        },
-        collegeName: collegeName || 'Anonymous',
-        poster: poster,
-        link: link || ''
+      title,
+      description,
+      category,
+      date,
+      location: {
+        type: 'Point',
+        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+        address: address,
+      },
+      collegeName: collegeName || 'Anonymous',
+      poster,
+      link: link || '',
+      whatsappNumber,
+      price,
+      capacity,
+      tags,
+      organizerName,
+      registrationLink,
+      isVerified,
+      isFeatured
     });
 
     const savedEvent = await newEvent.save();
+
     console.log('✅ Successfully saved to DB:', savedEvent._id);
     res.status(201).json(savedEvent);
   } catch (error) {
