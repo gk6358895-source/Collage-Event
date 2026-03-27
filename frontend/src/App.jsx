@@ -21,6 +21,7 @@ import EventDetailsOverlay from './components/EventDetailsOverlay';
 import NotificationToast from './components/NotificationToast';
 import RegistrationFormModal from './components/RegistrationFormModal';
 import SmartImportModal from './components/SmartImportModal';
+import Leaderboard from './components/Leaderboard';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -69,6 +70,7 @@ function App() {
   const [registeringEvent, setRegisteringEvent] = useState(null);
   const [isSmartImportOpen, setIsSmartImportOpen] = useState(false);
   const [smartImportData, setSmartImportData] = useState(null);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
   const handleEventSelect = (event) => {
     setSelectedEvent(event);
@@ -314,6 +316,11 @@ Shared via Collage Event 📡`;
         onSuccess={handleRegistrationSuccess}
       />
 
+      <Leaderboard 
+        isOpen={isLeaderboardOpen}
+        onClose={() => setIsLeaderboardOpen(false)}
+      />
+
       <NotificationToast 
         notifications={notifications}
         removeNotification={removeNotification}
@@ -356,24 +363,33 @@ Shared via Collage Event 📡`;
             </span>
           </div>
 
-          {/* New Add Event Quick Action in Sidebar */}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full p-4 bg-gradient-to-br from-purple-600 to-indigo-700 text-white rounded-[24px] shadow-lg shadow-purple-100 flex items-center justify-between group hover:scale-[1.02] active:scale-[0.98] transition-all"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
-                <Sparkles size={18} className="text-white" />
-              </div>
-              <div className="text-left">
-                <p className="font-black text-xs uppercase tracking-wider">Host Event</p>
-                <p className="text-[10px] text-purple-100 opacity-80">Share with the community</p>
-              </div>
-            </div>
-            <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-colors">
-              <span className="text-xl">+</span>
-            </div>
-          </button>
+          <div className="grid grid-cols-2 gap-3">
+             {/* New Add Event Quick Action */}
+             <button
+               onClick={() => setIsModalOpen(true)}
+               className="p-4 bg-gradient-to-br from-purple-600 to-indigo-700 text-white rounded-[24px] shadow-lg shadow-purple-100 flex flex-col items-start space-y-2 group hover:scale-[1.02] active:scale-[0.98] transition-all"
+             >
+               <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+                 <Sparkles size={18} className="text-white" />
+               </div>
+               <div className="text-left">
+                 <p className="font-black text-[10px] uppercase tracking-wider">Host Event</p>
+               </div>
+             </button>
+
+             {/* Leaderboard Quick Action */}
+             <button
+               onClick={() => setIsLeaderboardOpen(true)}
+               className="p-4 bg-white border border-gray-100 text-gray-800 rounded-[24px] shadow-sm flex flex-col items-start space-y-2 group hover:scale-[1.02] hover:bg-gray-50 active:scale-[0.98] transition-all"
+             >
+               <div className="bg-indigo-50 p-2 rounded-xl">
+                 <Trophy size={18} className="text-indigo-600" />
+               </div>
+               <div className="text-left">
+                 <p className="font-black text-[10px] uppercase tracking-wider">Rankings</p>
+               </div>
+             </button>
+          </div>
 
           {/* Category Quick Filters */}
           <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar">

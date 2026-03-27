@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Sparkles, MessageSquare, Wand2, Edit3 } from 'lucide-react';
 
+import AIPosterGenerator from './AIPosterGenerator';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CreateEventModal = ({ isOpen, onClose, userLocation, selectedLocation, onEventCreated, initialData }) => {
@@ -25,6 +27,7 @@ const CreateEventModal = ({ isOpen, onClose, userLocation, selectedLocation, onE
   const [otherCategoryName, setOtherCategoryName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
   // Auto-fill address if location is selected from map
   React.useEffect(() => {
@@ -291,7 +294,17 @@ const CreateEventModal = ({ isOpen, onClose, userLocation, selectedLocation, onE
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Poster URL</label>
+              <div className="flex justify-between items-center mb-1.5 ml-1">
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ">Poster URL</label>
+                <button
+                  type="button"
+                  onClick={() => setIsAIModalOpen(true)}
+                  className="flex items-center space-x-1 text-[9px] font-black text-purple-600 bg-purple-50 px-2 py-1 rounded-lg border border-purple-100 hover:bg-purple-100 transition-colors"
+                >
+                   <Sparkles size={10} />
+                   <span>GENERATE WITH AI</span>
+                </button>
+              </div>
               <input
                 type="text"
                 placeholder="Image link"
@@ -314,6 +327,17 @@ const CreateEventModal = ({ isOpen, onClose, userLocation, selectedLocation, onE
               />
             </div>
           </div>
+
+          <AIPosterGenerator 
+            isOpen={isAIModalOpen}
+            onClose={() => setIsAIModalOpen(false)}
+            onSelect={(url) => {
+               setFormData(prev => ({ ...prev, poster: url }));
+               setIsAIModalOpen(false);
+            }}
+            eventTitle={formData.title}
+            eventCategory={formData.category}
+          />
 
           <div>
             <div className="flex justify-between items-center mb-1.5 ">

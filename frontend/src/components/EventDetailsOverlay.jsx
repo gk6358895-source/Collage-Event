@@ -76,28 +76,43 @@ const EventDetailsOverlay = ({ event, isOpen, onClose, onOpenAI, onRegisterInter
             </button>
 
             <div className="flex-1 overflow-y-auto p-8 lg:p-12 custom-scrollbar space-y-8">
-              {/* Quick Info Bar */}
-              <div className="grid grid-cols-2 gap-4">
-                 <div className="p-5 bg-purple-50 rounded-[32px] border border-purple-100 flex items-center space-x-4">
-                    <div className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-purple-600 shadow-sm shrink-0">
-                       <Calendar size={24} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest">When</p>
-                      <p className="text-base font-black text-purple-900">{new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                    </div>
-                 </div>
+               {/* Quick Info Bar */}
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-5 bg-purple-50 rounded-[32px] border border-purple-100 flex items-center justify-between group">
+                     <div className="flex items-center space-x-4">
+                        <div className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-purple-600 shadow-sm shrink-0 font-black">
+                           <Calendar size={24} />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest ">When</p>
+                          <p className="text-base font-black text-purple-900 leading-tight">{new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                        </div>
+                     </div>
+                     <button
+                       onClick={(e) => {
+                          e.stopPropagation();
+                          const start = new Date(event.date).toISOString().replace(/-|:|\.\d\d\d/g, "");
+                          const end = new Date(new Date(event.date).getTime() + 10800000).toISOString().replace(/-|:|\.\d\d\d/g, ""); // +3 hours
+                          const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location.address)}&dates=${start}/${end}`;
+                          window.open(url, '_blank');
+                       }}
+                       className="p-2.5 bg-white text-purple-600 border border-purple-100 rounded-xl hover:bg-purple-600 hover:text-white transition-all shadow-sm"
+                       title="Sync to Google Calendar"
+                     >
+                        <Calendar size={16} />
+                     </button>
+                  </div>
 
-                 <div className="p-5 bg-orange-50 rounded-[32px] border border-orange-100 flex items-center space-x-4">
-                    <div className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-orange-600 shadow-sm shrink-0">
-                       <span className="text-xl font-bold">₹</span>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest">Entry</p>
-                      <p className="text-base font-black text-orange-900">{event.price > 0 ? `₹${event.price}` : 'Free'}</p>
-                    </div>
-                 </div>
-              </div>
+                  <div className="p-5 bg-orange-50 rounded-[32px] border border-orange-100 flex items-center space-x-4">
+                     <div className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-orange-600 shadow-sm shrink-0">
+                        <span className="text-xl font-bold">₹</span>
+                     </div>
+                     <div>
+                       <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest">Entry</p>
+                       <p className="text-base font-black text-orange-900 leading-tight">{event.price > 0 ? `₹${event.price}` : 'Free'}</p>
+                     </div>
+                  </div>
+               </div>
 
               {/* Description */}
               <div className="space-y-4">

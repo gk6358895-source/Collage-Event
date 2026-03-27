@@ -5,10 +5,15 @@ const Event = require('../models/Event');
 // 1. GET /api/events/nearby - Find events within a certain radius
 router.get('/nearby', async (req, res) => {
   try {
-    const { lng, lat, distance = 10000 } = req.query; // distance in meters
+    const { lng, lat, distance = 1000000 } = req.query; // default to 1000km for broad search
 
-    if (!lng || !lat) {
-      return res.status(400).json({ error: 'Longitude (lng) and Latitude (lat) are required.' });
+    const longitude = parseFloat(lng);
+    const latitude = parseFloat(lat);
+
+    if (isNaN(longitude) || isNaN(latitude)) {
+      return res.status(400).json({ 
+        error: 'Longitude (lng) and Latitude (lat) must be valid numbers.' 
+      });
     }
 
     const nearbyEvents = await Event.find({
@@ -16,7 +21,7 @@ router.get('/nearby', async (req, res) => {
         $near: {
           $geometry: {
             type: 'Point',
-            coordinates: [parseFloat(lng), parseFloat(lat)]
+            coordinates: [longitude, latitude]
           },
           $maxDistance: parseInt(distance)
         }
@@ -26,7 +31,10 @@ router.get('/nearby', async (req, res) => {
     res.json(nearbyEvents);
   } catch (error) {
     console.error('Error fetching nearby events:', error);
-    res.status(500).json({ error: 'Server error fetching nearby events.' });
+    res.status(500).json({ 
+      error: 'Server error fetching nearby events.', 
+      details: error.message 
+    });
   }
 });
 
